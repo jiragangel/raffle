@@ -129,15 +129,19 @@ h1, h2 {
   margin-bottom: 30px
 }
 .run-raffle {
-  padding: 20px;
+  padding: 5px 20px;
   border-radius: 10px;
-  background: #fccbcb;
+  background: #736855;
   border: none;
   cursor: pointer;
+  font-size: 15px;
+  color: white;
+  position: absolute;
+  bottom: 10px
 }
-.run-raffle:hover {
+/* .run-raffle:hover {
   border: solid 1px #ad9d9d
-}
+} */
 *:focus {
   outline: none
 }

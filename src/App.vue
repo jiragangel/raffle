@@ -31,6 +31,13 @@ body {
   src: local("Chalk"),
    url(./fonts/KGTenThousandReasons.ttf) format("truetype");
 }
+h1 {
+  font-size: 75px;
+  margin-top: 60px !important;
+}
+h2 {
+  font-size: 50px
+}
 h1, h2, h3 {
   font-family: 'Chalk'
 }
