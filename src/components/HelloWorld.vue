@@ -1,58 +1,116 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="main">
+    <div class="header">
+      <button @click="hideEntries = false">Show Entries</button>
+      <button @click="hideEntries = true">Hide Entries</button>
+    </div>
+    <div class="content">
+      <div class="entries" :class="{
+        'd-none': hideEntries
+      }">
+        <textarea @input="updateEntries" />
+      </div>
+      <div class="raffle-main" :class="{
+        'w-100': hideEntries
+      }">
+        <h1>
+          {{ winner.name }}
+        </h1>
+        <h2>
+          {{ winner.school }}
+        </h2>
+        <button @click="runRaffle">Run Raffle</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import _ from 'lodash';
+import Papa from 'papaparse';
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      entries: [],
+      winner: {
+        name: '',
+        school: ''
+      },
+      hideEntries: false
+    }
+  },
+  methods: {
+    delay(ms) {
+      return new Promise(res => setTimeout(res, ms));
+    },
+    updateEntries(event) {
+      const {
+        target: {
+          value
+        }
+      } = event;
+      this.entries = Papa.parse(value).data;
+    },
+    async runRaffle() {
+      for (let i = 0; i < 100; i++) {
+        const [ name, school ] = _.sample(this.entries);
+        this.winner = {
+          name,
+          school
+        };
+        await this.delay(25)
+      }
+    }
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.content {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+textarea {
+  width: 80%;
+  height: 80%;
+  resize: none;
 }
-a {
-  color: #42b983;
+.entries, .raffle-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.entries {
+  width: 50%;
+  height: 100%
+}
+.raffle-main {
+  width: 50%;
+  height: 100%
+}
+.w-100 {
+  width: 100% !important
+}
+.d-none {
+  display: none
+}
+h1, h2 {
+  margin: 0;
+  margin-bottom: 30px
 }
 </style>
