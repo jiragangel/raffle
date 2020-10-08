@@ -1,8 +1,7 @@
 <template>
   <div class="main">
     <div class="header">
-      <button @click="hideEntries = false">Show Entries</button>
-      <button @click="hideEntries = true">Hide Entries</button>
+      <button class="toggle-entries" @click="hideEntries = !hideEntries">X</button>
     </div>
     <div class="content">
       <div class="entries" :class="{
@@ -19,7 +18,7 @@
         <h2>
           {{ winner.school }}
         </h2>
-        <button @click="runRaffle">Run Raffle</button>
+        <button @click="runRaffle" class="run-raffle">Run Raffle</button>
       </div>
     </div>
   </div>
@@ -78,6 +77,12 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.header {
+  display: flex;
+  width: 100vw;
+  position: absolute;
+  top: 0
+}
 .content {
   width: 100vw;
   height: 100%;
@@ -95,13 +100,23 @@ textarea {
   align-items: center;
   flex-direction: column;
 }
+.toggle-entries {
+  background: none;
+  border: none
+}
+.toggle-entries:hover {
+  cursor: pointer;
+}
 .entries {
   width: 50%;
   height: 100%
 }
 .raffle-main {
+  color: white;
   width: 50%;
-  height: 100%
+  height: 100%;
+  background-image: url(https://i.pinimg.com/originals/92/59/65/9259654da727c0f2adcc1721ee1d1c7c.jpg);
+  background-repeat: none;
 }
 .w-100 {
   width: 100% !important
@@ -112,5 +127,18 @@ textarea {
 h1, h2 {
   margin: 0;
   margin-bottom: 30px
+}
+.run-raffle {
+  padding: 20px;
+  border-radius: 10px;
+  background: #fccbcb;
+  border: none;
+  cursor: pointer;
+}
+.run-raffle:hover {
+  border: solid 1px #ad9d9d
+}
+*:focus {
+  outline: none
 }
 </style>

@@ -26,4 +26,12 @@ export default {
 body {
   margin: 0
 }
+@font-face {
+  font-family: "Chalk";
+  src: local("Chalk"),
+   url(./fonts/KGTenThousandReasons.ttf) format("truetype");
+}
+h1, h2, h3 {
+  font-family: 'Chalk'
+}
 </style>
