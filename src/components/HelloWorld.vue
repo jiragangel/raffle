@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div v-if="!showWinners" class="main">
     <div class="header">
       <button class="toggle-entries" @click="hideEntries = !hideEntries">X</button>
     </div>
@@ -7,7 +7,7 @@
       <div class="entries" :class="{
         'd-none': hideEntries
       }">
-        <textarea @input="updateEntries" />
+        <textarea v-model="entriesText" @input="updateEntries" />
       </div>
       <div class="raffle-main" :class="{
         'w-100': hideEntries
@@ -18,7 +18,29 @@
         <h2>
           {{ winner.school }}
         </h2>
-        <button @click="runRaffle" class="run-raffle">Run Raffle</button>
+        <div class="run-raffle">
+          <button @click="runRaffle" >Run Raffle</button>
+          <button @click="showWinners = true" >Show Winners</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-else class="main winners">
+    <div class="content">
+      <div class="raffle-main w-100" >
+        <div class="grid">
+          <div class="grid-item" v-for="(winner, key) in winners" :key="key">
+          <h1>
+            {{ winner.name }}
+          </h1>
+          <h2>
+            {{ winner.school }}
+          </h2>
+          </div>
+        </div>
+        <div class="run-raffle">
+          <button @click="resetWinners" >Hide Winners</button>
+        </div>
       </div>
     </div>
   </div>
@@ -35,27 +57,36 @@ export default {
   },
   data() {
     return {
+      winners: [],
       entries: [],
       winner: {
         name: '',
         school: ''
       },
-      hideEntries: false
+      showWinners: false,
+      hideEntries: false,
+      entriesText: ''
     }
   },
   methods: {
+    resetWinners() {
+      this.winner = {
+        name: '',
+        school: ''
+      };
+      this.winners = [];
+      this.showWinners = false;
+    },
     delay(ms) {
       return new Promise(res => setTimeout(res, ms));
     },
-    updateEntries(event) {
-      const {
-        target: {
-          value
-        }
-      } = event;
-      this.entries = Papa.parse(value).data;
+    updateEntries() {
+      this.entries = Papa.parse(this.entriesText).data;
     },
     async runRaffle() {
+      this.entries = this.entries.filter(([name, school]) => {
+        return !this.winners.find((winner) => winner.name === name && winner.school === school)
+      })
       for (let i = 0; i < 100; i++) {
         const [ name, school ] = _.sample(this.entries);
         this.winner = {
@@ -64,6 +95,8 @@ export default {
         };
         await this.delay(25)
       }
+
+      this.winners.push({ ...this.winner });
     }
   }
 }
@@ -73,7 +106,7 @@ export default {
 <style scoped>
 .main {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -89,10 +122,29 @@ export default {
   display: flex;
   flex-direction: row;
 }
+.grid {
+  display: grid;
+  justify-content: space-evenly;   
+  width: 100%;
+  grid-template-columns: repeat( auto-fit, minmax(400px, 1fr) );
+}
+.grid h1 {
+  font-size: 40px;
+  margin-top: 5px !important; 
+  margin-bottom: 5px !important;
+}
+.grid h2 {
+  font-size: 30px;
+  margin-top: 5px !important; 
+  margin-bottom: 30px !important;
+}
 textarea {
   width: 80%;
   height: 80%;
   resize: none;
+}
+.raffle-main {
+  height: 100%;
 }
 .entries, .raffle-main {
   display: flex;
@@ -115,8 +167,9 @@ textarea {
   color: white;
   width: 50%;
   height: 100%;
-  background-image: url(https://i.pinimg.com/originals/92/59/65/9259654da727c0f2adcc1721ee1d1c7c.jpg);
+  background-image: url(https://files.123freevectors.com/wp-content/uploads/new/123fv-images/1175-green-chalkboard-background.jpg);
   background-repeat: none;
+  background-size: cover;
 }
 .w-100 {
   width: 100% !important
@@ -129,15 +182,18 @@ h1, h2 {
   margin-bottom: 30px
 }
 .run-raffle {
+  position: absolute;
+  bottom: 10px
+}
+.run-raffle > button {
+  cursor: pointer;
+  font-size: 15px;
+  color: white;
   padding: 5px 20px;
   border-radius: 10px;
   background: #736855;
   border: none;
-  cursor: pointer;
-  font-size: 15px;
-  color: white;
-  position: absolute;
-  bottom: 10px
+  margin-left: 10px;
 }
 /* .run-raffle:hover {
   border: solid 1px #ad9d9d
