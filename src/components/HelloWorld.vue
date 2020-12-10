@@ -84,9 +84,6 @@ export default {
       this.entries = Papa.parse(this.entriesText).data;
     },
     async runRaffle() {
-      this.entries = this.entries.filter(([name, school]) => {
-        return !this.winners.find((winner) => winner.name === name && winner.school === school)
-      })
       for (let i = 0; i < 100; i++) {
         const [ name, school ] = _.sample(this.entries);
         this.winner = {
@@ -95,6 +92,10 @@ export default {
         };
         await this.delay(25)
       }
+      this.entries = this.entries.filter(([name, school]) => {
+        return this.winner.name !== name || this.winner.school !== school
+      })
+      console.log(this.entries)
 
       this.winners.push({ ...this.winner });
     }
